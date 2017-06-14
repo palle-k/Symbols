@@ -1,6 +1,6 @@
 //
 //  Matrix.swift
-//  SymbolicMath
+//  Symbols
 //
 //  Created by Palle Klewitz on 08.06.17.
 //

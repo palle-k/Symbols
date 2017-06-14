@@ -1,6 +1,6 @@
 //
 //  Utility.swift
-//  SymbolicMath
+//  Symbols
 //
 //  Created by Palle Klewitz on 07.06.17.
 //

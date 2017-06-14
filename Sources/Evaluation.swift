@@ -1,6 +1,6 @@
 //
 //  Evaluation.swift
-//  SymbolicMath
+//  Symbols
 //
 //  Created by Palle Klewitz on 30.05.17.
 //
@@ -109,34 +109,34 @@ public extension Expression {
 			return try base.evaluated(variables: variables, functions: functions) ** exponent.evaluated(variables: variables, functions: functions)
 			
 		case .log(let expr):
-			return try SymbolicMath.log(expr.evaluated(variables: variables, functions: functions))
+			return try Symbols.log(expr.evaluated(variables: variables, functions: functions))
 			
 		case .sin(let expr):
-			return try SymbolicMath.sin(expr.evaluated(variables: variables, functions: functions))
+			return try Symbols.sin(expr.evaluated(variables: variables, functions: functions))
 			
 		case .cos(let expr):
-			return try SymbolicMath.cos(expr.evaluated(variables: variables, functions: functions))
+			return try Symbols.cos(expr.evaluated(variables: variables, functions: functions))
 			
 		case .tan(let expr):
-			return try SymbolicMath.tan(expr.evaluated(variables: variables, functions: functions))
+			return try Symbols.tan(expr.evaluated(variables: variables, functions: functions))
 			
 		case .asin(let expr):
-			return try SymbolicMath.asin(expr.evaluated(variables: variables, functions: functions))
+			return try Symbols.asin(expr.evaluated(variables: variables, functions: functions))
 			
 		case .acos(let expr):
-			return try SymbolicMath.acos(expr.evaluated(variables: variables, functions: functions))
+			return try Symbols.acos(expr.evaluated(variables: variables, functions: functions))
 			
 		case .atan(let expr):
-			return try SymbolicMath.atan(expr.evaluated(variables: variables, functions: functions))
+			return try Symbols.atan(expr.evaluated(variables: variables, functions: functions))
 			
 		case .sinh(let expr):
-			return try SymbolicMath.sinh(expr.evaluated(variables: variables, functions: functions))
+			return try Symbols.sinh(expr.evaluated(variables: variables, functions: functions))
 			
 		case .cosh(let expr):
-			return try SymbolicMath.cosh(expr.evaluated(variables: variables, functions: functions))
+			return try Symbols.cosh(expr.evaluated(variables: variables, functions: functions))
 			
 		case .tanh(let expr):
-			return try SymbolicMath.tanh(expr.evaluated(variables: variables, functions: functions))
+			return try Symbols.tanh(expr.evaluated(variables: variables, functions: functions))
 			
 		case .variable(let name):
 			if let value = variables[name] {
@@ -162,7 +162,7 @@ public extension Expression {
 			}
 			
 		case .abs(let expr):
-			return try SymbolicMath.abs(expr.evaluated(variables: variables, functions: functions))
+			return try Symbols.abs(expr.evaluated(variables: variables, functions: functions))
 		}
 	}
 	

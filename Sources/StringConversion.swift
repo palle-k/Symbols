@@ -1,6 +1,6 @@
 //
 //  StringConversion.swift
-//  SymbolicMath
+//  Symbols
 //
 //  Created by Palle Klewitz on 30.05.17.
 //
