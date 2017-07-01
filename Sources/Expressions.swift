@@ -71,7 +71,7 @@ public indirect enum Expression {
 	case invert(Expression)
 	
 	/// The exponential function of an expression
-	case exp(Expression, Expression)
+	case exp(base: Expression, exponent: Expression)
 	
 	/// The natural logarithm of an expression
 	case log(Expression)
@@ -97,8 +97,10 @@ public indirect enum Expression {
 	
 	case abs(Expression)
 	
-	case function([Expression], String)
+	case function(parameters: [Expression], name: String)
 	case branch([(Predicate, Expression)])
+	
+	case sum(parameter: String, start: Expression, end: Expression, summand: Expression)
 }
 
 public extension Expression {
@@ -232,6 +234,14 @@ public extension Expression {
 			
 		case .abs(let expression):
 			return expression.contains(variable: variable)
+			
+		case .sum(let parameter, _, _, _) where parameter == variable:
+			return false
+			
+		case .sum(parameter: _, start: let start, end: let end, summand: let summand):
+			return start.contains(variable: variable)
+				|| end.contains(variable: variable)
+				|| summand.contains(variable: variable)
 		}
 	}
 }

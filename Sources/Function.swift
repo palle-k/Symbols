@@ -88,9 +88,9 @@ public struct Function {
 				return derive(expression: expr) * .negate(.sin(expr))
 				
 			case .tan(let expr):
-				return derive(expression: expr) / .exp(.cos(expr), 2)
+				return derive(expression: expr) / .exp(base: .cos(expr), exponent: 2)
 				
-			case .multiply(let expressions):
+			case .multiply(_):
 				fatalError()
 				
 			case .exp(_, _):

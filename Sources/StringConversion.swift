@@ -26,7 +26,8 @@
 import Foundation
 
 enum ExpressionPrecedence: Int {
-	case branch = 0
+	case sentence = 0
+	case branch
 	case addition
 	case multiplication
 	case exponentiation
@@ -88,6 +89,9 @@ extension Expression {
 			
 		case .abs(_):
 			return .atom
+			
+		case .sum(_, _, _, _):
+			return .sentence
 		}
 	}
 }
@@ -163,6 +167,9 @@ extension Expression: CustomStringConvertible {
 			
 		case .abs(let expr):
 			return "|\(expr.description)|"
+			
+		case .sum(let parameter, let start, let end, let summand):
+			return "sum \(parameter) = \(start) to \(end) of \(summand)"
 		}
 	}
 }

@@ -25,10 +25,88 @@
 
 import Foundation
 
-struct Vector {
+public struct Index2D<IndexComponent: Strideable> {
+	public let column: IndexComponent
+	public let row: IndexComponent
 	
+	public init(column: IndexComponent, row: IndexComponent) {
+		self.column = column
+		self.row = row
+	}
 }
 
-struct Matrix {
+extension Index2D: Comparable {
+	public static func <(lhs: Index2D<IndexComponent>, rhs: Index2D<IndexComponent>) -> Bool {
+		return lhs.row < rhs.row || (lhs.row == rhs.row && lhs.column < rhs.column)
+	}
 	
+	public static func ==(lhs: Index2D<IndexComponent>, rhs: Index2D<IndexComponent>) -> Bool {
+		return lhs.column == rhs.column && lhs.row == rhs.row
+	}
+}
+
+public struct Matrix<_Element>: Collection {
+	public typealias Element = _Element
+	public typealias Index = Index2D<Int>
+	public typealias SubSequence = SubMatrix<Element>
+	
+	public var startIndex: Index2D<Int> {
+		return Index2D(column: 0, row: 0)
+	}
+	
+	public var endIndex: Index2D<Int> {
+		return Index2D(column: width - 1, row: height - 1)
+	}
+	
+	public let width: Int
+	public let height: Int
+	
+	private var elements: [Element]
+	
+	public func index(after i: Index2D<Int>) -> Index2D<Int> {
+		return i.column + 1 >= width ? Index2D(column: 0, row: i.row + 1) : Index2D(column: i.column + 1, row: i.row)
+	}
+	
+	public subscript (index: Index2D<Int>) -> Element {
+		get {
+			return elements[index.column + index.row * width]
+		}
+		
+		set (new) {
+			elements[index.column + index.row * width] = new
+		}
+	}
+	
+	public init(repeating element: Element, width: Int, height: Int) {
+		self.elements = [Element](repeating: element, count: width * height)
+		self.width = width
+		self.height = height
+	}
+}
+
+public struct SubMatrix<_Element>: Collection {
+	public typealias Element = _Element
+	public typealias Index = Index2D<Int>
+	public typealias SubSequence = SubMatrix<Element>
+	
+	public let startIndex: Index2D<Int>
+	public let endIndex: Index2D<Int>
+	
+	public var width: Int {
+		return endIndex.column - startIndex.column
+	}
+	
+	public var height: Int {
+		return endIndex.row - startIndex.row
+	}
+	
+	private let base: Matrix<_Element>
+	
+	public func index(after i: Index2D<Int>) -> Index2D<Int> {
+		return i.column + 1 >= endIndex.column ? Index2D(column: 0, row: i.row + 1) : Index2D(column: i.column + 1, row: i.row)
+	}
+	
+	public subscript (index: Index2D<Int>) -> Element {
+		return base[Index2D(column: index.column + startIndex.column, row: index.row + startIndex.row)]
+	}
 }

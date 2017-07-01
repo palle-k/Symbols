@@ -64,7 +64,12 @@ extension Scalar: ExpressibleByFloatLiteral {
 	}
 }
 
-extension Scalar: ExpressibleByIntegerLiteral {
+//extension Scalar: ExpressibleByIntegerLiteral {
+//
+//}
+
+extension Scalar: SignedNumeric {
+	
 	public typealias IntegerLiteralType = Int
 	
 	public init(integerLiteral value: IntegerLiteralType) {
@@ -74,10 +79,14 @@ extension Scalar: ExpressibleByIntegerLiteral {
 	public init(_ value: IntegerLiteralType) {
 		self = .whole(value)
 	}
-}
-
-extension Scalar: Equatable {
-	public static func ==(lhs: Scalar, rhs: Scalar) -> Bool {
+	
+	public typealias Magnitude = Scalar
+	
+	public mutating func negate() {
+		self = -self
+	}
+	
+	public static func == (lhs: Scalar, rhs: Scalar) -> Bool {
 		switch (lhs, rhs) {
 		case (.real(let l), .real(let r)):
 			return l == r
@@ -90,6 +99,71 @@ extension Scalar: Equatable {
 			
 		case (.whole(let l), .whole(let r)):
 			return l == r
+		}
+	}
+	
+	public static prefix func - (value: Scalar) -> Scalar {
+		switch value {
+		case .real(let r):
+			return .real(-r)
+			
+		case .whole(let w):
+			return .whole(-w)
+		}
+	}
+	
+	public static func + (lhs: Scalar, rhs: Scalar) -> Scalar {
+		switch (lhs, rhs) {
+		case (.real(let l), .real(let r)):
+			return .real(l + r)
+			
+		case (.real(let l), .whole(let r)):
+			return .real(l + Double(r))
+			
+		case (.whole(let l), .real(let r)):
+			return .real(Double(l) + r)
+			
+		case (.whole(let l), .whole(let r)):
+			return .whole(l + r)
+		}
+	}
+	
+	public static func * (lhs: Scalar, rhs: Scalar) -> Scalar {
+		switch (lhs, rhs) {
+		case (.real(let l), .real(let r)):
+			return .real(l * r)
+			
+		case (.real(let l), .whole(let r)):
+			return .real(l * Double(r))
+			
+		case (.whole(let l), .real(let r)):
+			return .real(Double(l) * r)
+			
+		case (.whole(let l), .whole(let r)):
+			return .whole(l * r)
+		}
+	}
+	
+	public static func - (lhs: Scalar, rhs: Scalar) -> Scalar {
+		return lhs + -rhs
+	}
+	
+	public static func / (lhs: Scalar, rhs: Scalar) -> Scalar {
+		switch (lhs, rhs) {
+		case (.real(let l), .real(let r)):
+			return .real(l / r)
+			
+		case (.real(let l), .whole(let r)):
+			return .real(l / Double(r))
+			
+		case (.whole(let l), .real(let r)):
+			return .real(Double(l) / r)
+			
+		case (.whole(let l), .whole(let r)) where l % r == 0:
+			return .whole(l / r)
+			
+		case (.whole(let l), .whole(let r)):
+			return .real(Double(l) / Double(r))
 		}
 	}
 }
@@ -124,70 +198,19 @@ extension Scalar: CustomStringConvertible {
 	}
 }
 
-public prefix func - (value: Scalar) -> Scalar {
-	switch value {
-	case .real(let r):
-		return .real(-r)
-		
-	case .whole(let w):
-		return .whole(-w)
+extension Scalar: Strideable {
+	public func distance(to other: Scalar) -> Scalar {
+		return other - self
 	}
+	
+	public func advanced(by n: Stride) -> Scalar {
+		return self + n
+	}
+	
+	public typealias Stride = Scalar
 }
 
-public func + (lhs: Scalar, rhs: Scalar) -> Scalar {
-	switch (lhs, rhs) {
-	case (.real(let l), .real(let r)):
-		return .real(l + r)
-		
-	case (.real(let l), .whole(let r)):
-		return .real(l + Double(r))
-		
-	case (.whole(let l), .real(let r)):
-		return .real(Double(l) + r)
-		
-	case (.whole(let l), .whole(let r)):
-		return .whole(l + r)
-	}
-}
 
-public func * (lhs: Scalar, rhs: Scalar) -> Scalar {
-	switch (lhs, rhs) {
-	case (.real(let l), .real(let r)):
-		return .real(l * r)
-		
-	case (.real(let l), .whole(let r)):
-		return .real(l * Double(r))
-		
-	case (.whole(let l), .real(let r)):
-		return .real(Double(l) * r)
-		
-	case (.whole(let l), .whole(let r)):
-		return .whole(l * r)
-	}
-}
-
-public func - (lhs: Scalar, rhs: Scalar) -> Scalar {
-	return lhs + -rhs
-}
-
-public func / (lhs: Scalar, rhs: Scalar) -> Scalar {
-	switch (lhs, rhs) {
-	case (.real(let l), .real(let r)):
-		return .real(l / r)
-		
-	case (.real(let l), .whole(let r)):
-		return .real(l / Double(r))
-		
-	case (.whole(let l), .real(let r)):
-		return .real(Double(l) / r)
-		
-	case (.whole(let l), .whole(let r)) where l % r == 0:
-		return .whole(l / r)
-		
-	case (.whole(let l), .whole(let r)):
-		return .real(Double(l) / Double(r))
-	}
-}
 
 precedencegroup ExponentiationPrecedence {
 	higherThan: MultiplicationPrecedence

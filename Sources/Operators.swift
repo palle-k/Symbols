@@ -69,11 +69,11 @@ public prefix func - (value: Expression) -> Expression {
 }
 
 public func ** (lhs: Expression, rhs: Expression) -> Expression {
-	return .exp(lhs, rhs)
+	return .exp(base: lhs, exponent: rhs)
 }
 
 public func pow(_ base: Expression, _ exponent: Expression) -> Expression {
-	return .exp(base, exponent)
+	return .exp(base: base, exponent: exponent)
 }
 
 public func log(_ expr: Expression) -> Expression {
@@ -121,5 +121,5 @@ public func tanh(_ expr: Expression) -> Expression {
 }
 
 public func sqrt(_ expr: Expression) -> Expression {
-	return .exp(expr, 0.5)
+	return .exp(base: expr, exponent: 0.5)
 }

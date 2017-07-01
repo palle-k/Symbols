@@ -51,7 +51,7 @@ public extension Expression {
 			return .add(expressions.map {$0.replacing(variable: variable, with: expression)})
 			
 		case .exp(let base, let exponent):
-			return .exp(base.replacing(variable: variable, with: expression), exponent.replacing(variable: variable, with: expression))
+			return .exp(base: base.replacing(variable: variable, with: expression), exponent: exponent.replacing(variable: variable, with: expression))
 			
 		case .log(let expr):
 			return .log(expr.replacing(variable: variable, with: expression))
@@ -84,7 +84,7 @@ public extension Expression {
 			return .atan(expr.replacing(variable: variable, with: expression))
 			
 		case .function(let parameters, let function):
-			return .function(parameters.map {$0.replacing(variable: variable, with: expression)}, function)
+			return .function(parameters: parameters.map {$0.replacing(variable: variable, with: expression)}, name: function)
 			
 		case .variable(let v) where v == variable:
 			return expression
@@ -99,6 +99,12 @@ public extension Expression {
 			
 		case .abs(let expr):
 			return .abs(expr.replacing(variable: variable, with: expression))
+			
+		case .sum(let parameter, let start, let end, let summand) where parameter == variable:
+			return .sum(parameter: parameter, start: start.replacing(variable: variable, with: expression), end: end.replacing(variable: variable, with: expression), summand: summand)
+			
+		case .sum(parameter: let parameter, start: let start, end: let end, summand: let summand):
+			return .sum(parameter: parameter, start: start.replacing(variable: variable, with: expression), end: end.replacing(variable: variable, with: expression), summand: summand.replacing(variable: variable, with: expression))
 		}
 	}
 	
@@ -180,6 +186,11 @@ public extension Expression {
 			
 		case .abs(let expr):
 			return try Symbols.abs(expr.evaluated(variables: variables, functions: functions))
+			
+		case .sum(let parameter, let start, let end, let summand):
+			let start = try start.evaluated(variables: variables, functions: functions)
+			let end = try end.evaluated(variables: variables, functions: functions)
+			
 		}
 	}
 	
@@ -253,6 +264,9 @@ public extension Expression {
 			return !options.contains(where: { option -> Bool in
 				return !option.1.isEvaluatable
 			})
+			
+		case .sum(let variable, let start, let end, let summand):
+			return start.isEvaluatable && end.isEvaluatable && summand.replacing(variable: variable, with: 0).isEvaluatable
 		}
 	}
 	
@@ -292,12 +306,12 @@ public extension Expression {
 						return true
 					}
 				}
-				factors.append(.exp(.variable(variable), .number(.real(.whole(count)))))
+				factors.append(.exp(base: .variable(variable), exponent: .number(.real(.whole(count)))))
 			}
 			return .multiply(factors)
 			
-		case .exp(.exp(let epxr, let inner), let outer):
-			fatalError()
+//		case .exp(.exp(let epxr, let inner), let outer):
+//			fatalError()
 			
 		default:
 			return self

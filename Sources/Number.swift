@@ -159,6 +159,21 @@ extension Number {
 	}
 }
 
+extension Number {
+	public var real: Scalar {
+		switch self {
+		case .real(let real):
+			return real
+			
+		case .imaginary(_):
+			return 0
+			
+		case .complex(let real, _):
+			return real
+		}
+	}
+}
+
 public prefix func - (value: Number) -> Number {
 	switch value {
 	case .real(let r):
@@ -335,14 +350,17 @@ public func exp(_ value: Number) -> Number {
 
 public func log(_ value: Number) -> Number {
 	switch value {
-	case .real(let real):
+	case .real(let real) where real > 0:
 		return .real(log(real))
 		
-	case .imaginary(let imaginary):
-		fatalError()
+	case .real(let real):
+		return log(abs(.real(real))) + Number.i * arg(value)
 		
-	case .complex(let real, let imaginary):
-		fatalError()
+	case .imaginary(_):
+		return log(abs(value)) * arg(value)
+		
+	case .complex(_, _):
+		return log(abs(value)) * arg(value)
 	}
 }
 
